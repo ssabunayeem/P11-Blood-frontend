@@ -76,7 +76,7 @@ const Login = () => {
 
             </div>
 
-            <div className="card bg-rose-300 w-[350px] md:w-[650px] md:p-8 shrink-0 shadow-2xl rounded-4xl">
+            <div className="card bg-rose-300 w-87.5 md:w-162.5 md:p-8 shrink-0 shadow-2xl rounded-4xl">
                 <div className="card-body">
                     <form onSubmit={handleSubmit} className="fieldset">
 

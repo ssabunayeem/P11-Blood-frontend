@@ -23,10 +23,10 @@ const Register = () => {
         const name = e.target.name.value;
         const photoUrl = e.target.photoUrl;
         const file = photoUrl.files[0];
-        console.log(file);
 
 
-        console.log(name, photoUrl);
+
+
 
         const uppercase = /[A-Z]/;
         const lowercase = /[a-z]/;
@@ -43,7 +43,7 @@ const Register = () => {
 
 
 
-        const res = await axios.post(`https://api.imgbb.com/1/upload?&key=f57dd31b60f91b1c6b01c96eab4a817f`, { image: file },
+        const res = await axios.post(`https://api.imgbb.com/1/upload?key=f57dd31b60f91b1c6b01c96eab4a817f`, { image: file },
             {
                 headers: { "Content-Type": "multipart/form-data" },
             }
@@ -51,8 +51,21 @@ const Register = () => {
 
         const mainPhotoUrl = res.data.data.display_url;
 
+        const formData = {
+            email,
+            pass,
+            name,
+            mainPhotoUrl,
+            // BloodGroup,
+            // district,
+            // upozila,
+        };
+
+
+
 
         if (res.data.success == true) {
+
             registerWithEmailPassword(email, pass)
                 .then((userCredential) => {
 
@@ -60,16 +73,28 @@ const Register = () => {
                         displayName: name, photoURL: mainPhotoUrl
                     }).then(() => {
                         setUser(userCredential.user)
+
+
+                        axios.post('http://localhost:5000/users', formData)
+                            .then(res => {
+                                console.log(res.data);
+                            })
+                            .catch(err => {
+                                console.log(err);
+
+                            })
+
+
+
                     }).catch((error) => {
                         console.log(error)
                     });
 
-
-                }).catch(err => {
+                })
+                .catch(err => {
                     console.log(err);
 
                 })
-
         }
 
     }
@@ -99,7 +124,7 @@ const Register = () => {
 
                 </div>
 
-                <div className="card bg-rose-300 w-[350px] md:w-[650px] md:p-8 shrink-0 shadow-2xl rounded-4xl">
+                <div className="card bg-rose-300 w-87.5 md:w-162.5 md:p-8 shrink-0 shadow-2xl rounded-4xl">
                     <div className="card-body">
                         <form onSubmit={handleSubmit} className="fieldset">
 
