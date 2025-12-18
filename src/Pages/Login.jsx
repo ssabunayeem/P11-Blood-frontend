@@ -112,6 +112,8 @@ const Login = () => {
 
                         <button onClick={googleSignin} className="btn py-6 text-lg text-gray-500 rounded-full"><FcGoogle />Google </button>
 
+
+
                     </form>
                 </div>
             </div>
