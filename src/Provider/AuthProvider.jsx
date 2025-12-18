@@ -49,6 +49,7 @@ const AuthProvider = ({ children }) => {
                 setRole(res.data.role);
             });
     }, [user]);
+
     console.log(role);
 
 
@@ -61,6 +62,7 @@ const AuthProvider = ({ children }) => {
         setUser,
         user,
         handleGoogleSignin,
+        role,
     }
 
     return <AuthContext value={authData}>

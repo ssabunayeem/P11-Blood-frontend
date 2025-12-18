@@ -23,6 +23,9 @@ const Register = () => {
         const name = e.target.name.value;
         const photoUrl = e.target.photoUrl;
         const file = photoUrl.files[0];
+        const role = e.target.role.value;
+
+
 
 
 
@@ -56,6 +59,7 @@ const Register = () => {
             pass,
             name,
             mainPhotoUrl,
+            role,
             // BloodGroup,
             // district,
             // upozila,
@@ -133,6 +137,27 @@ const Register = () => {
 
                             <label className="label text-lg">PhotoUrl</label>
                             <input name='photoUrl' type="file" className="input w-full pt-2  rounded-full" placeholder="" />
+
+
+
+
+                            <label className="label text-lg">User Role</label>
+
+                            <select
+
+                                name='role'
+                                defaultValue='choose role'
+                                className=" select w-full p-2 text-lg rounded-full mt-1 bg-white">
+
+                                <option defaultValue="">Select your Role</option>
+                                <option value="manager">Manager</option>
+                                <option value="buyer">Buyer</option>
+
+                            </select>
+
+
+
+
 
                             <label className="label text-lg">Email</label>
                             <input name='email' type="email" className="input w-full py-6 text-lg rounded-full" placeholder="Email" />
