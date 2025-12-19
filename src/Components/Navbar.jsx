@@ -1,14 +1,21 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router';
 import { AuthContext } from '../Provider/AuthProvider';
+import { signOut } from 'firebase/auth';
+import auth from '../firebase/firebase.config';
 
 const Navbar = () => {
 
-
     const { user } = useContext(AuthContext)
 
+
+    const logout = () => {
+        signOut(auth)
+    }
+
+
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar bg-rose-100 shadow-sm z-10">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -28,7 +35,8 @@ const Navbar = () => {
                         <li><a>Item 3</a></li>
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl">daisyUI</a>
+                <a className="btn btn-ghost text-xl">BloodBD</a>
+
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
@@ -45,9 +53,10 @@ const Navbar = () => {
                     <li><a>Item 3</a></li>
                 </ul>
             </div>
-            <div className="navbar-end">
+            <div className="navbar-end gap-5">
+                <Link to={'/dashboard/main'} className="btn bg-red-600 hover:scale-105 transition-all text-white">Dashboard</Link>
                 {
-                    user ? <button className="btn">Logout</button> : <Link to={'/login'} className="btn">Login</Link>
+                    user ? <button onClick={logout} className="btn  bg-red-600 hover:scale-105 transition-all text-white">Logout</button> : <Link to={'/login'} className="btn">Login</Link>
                 }
 
             </div>
