@@ -5,6 +5,8 @@ import Login from "../Pages/Login";
 import Register from "../Pages/Register";
 import DashboardLayout from "../DashboardLayout/DashboardLayout";
 import MainDashboard from "../Pages/Dashboard/MainDashboard/MainDashboard";
+import DonateRequests from "../Pages/Dashboard/DonateRequests";
+import ManageUsers from "../Pages/Dashboard/ManageUsers";
 
 
 const router = createBrowserRouter([
@@ -34,6 +36,14 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/main",
         element: <MainDashboard></MainDashboard>
+      },
+      {
+        path: "/dashboard/donations",
+        element: <DonateRequests></DonateRequests>
+      },
+      {
+        path: "/dashboard/users",
+        element: <ManageUsers></ManageUsers>
       }
     ],
   }

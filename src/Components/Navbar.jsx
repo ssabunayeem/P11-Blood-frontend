@@ -3,6 +3,9 @@ import { Link } from 'react-router';
 import { AuthContext } from '../Provider/AuthProvider';
 import { signOut } from 'firebase/auth';
 import auth from '../firebase/firebase.config';
+import logo from "../assets/logo.png";
+import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+
 
 const Navbar = () => {
 
@@ -15,7 +18,7 @@ const Navbar = () => {
 
 
     return (
-        <div className="navbar bg-rose-100 shadow-sm z-10">
+        <div className="navbar bg-rose-100 shadow-sm z-10 lg:px-30">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -35,7 +38,18 @@ const Navbar = () => {
                         <li><a>Item 3</a></li>
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl">BloodBD</a>
+
+                <div className="btn btn-ghost hover:bg-rose-100 border-0 flex items-center space-x-3">
+                    {/* Logo */}
+                    <Link to="/" className="w-12 flex items-center justify-center rounded-full overflow-hidden border-2 border-rose-500 m-0">
+                        <img src={logo} alt="Logo" className="w-full h-full object-cover" />
+                    </Link>
+
+                    {/* Text */}
+                    <span className="text-rose-500 font-bold text-lg lg:text-2xl hidden md:block">YIM Donation</span>
+                </div>
+
+
 
             </div>
             <div className="navbar-center hidden lg:flex">
@@ -56,7 +70,7 @@ const Navbar = () => {
             <div className="navbar-end gap-5">
                 <Link to={'/dashboard/main'} className="btn bg-red-600 hover:scale-105 transition-all text-white">Dashboard</Link>
                 {
-                    user ? <button onClick={logout} className="btn  bg-red-600 hover:scale-105 transition-all text-white">Logout</button> : <Link to={'/login'} className="btn">Login</Link>
+                    user ? <button onClick={logout} className="btn  bg-red-600 hover:scale-105 transition-all text-white"> <FaSignOutAlt className='rotate-180' />Logout</button> : <Link to={'/login'} className="btn  bg-red-600 hover:scale-105 transition-all text-white"> <FaSignInAlt /> Login</Link>
                 }
 
             </div>
