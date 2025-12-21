@@ -14,6 +14,11 @@ import MyRequest from "../pages/Dashboard/MyRequest/MyRequest";
 import Donate from "../pages/Donate/Donate";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import SearchRequest from "../pages/searchRequest/SearchRequest";
+import AllRequest from "../pages/AllRequest";
+import Blogs from "../pages/Blogs";
+import BlogDetails from "../pages/BlogDeatils";
+
+
 
 const router = createBrowserRouter([
   {
@@ -23,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home></Home>,
+      },
+      {
+        path: "/all-request",
+        element: <AllRequest></AllRequest>,
       },
       {
         path: "/login",
@@ -45,9 +54,19 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/blogs",
+        element: <Blogs></Blogs>,
+      },
+      {
         path: "/payment-success",
         element: <PaymentSuccess></PaymentSuccess>,
       },
+      {
+        path: "/blogs/:id",
+        element: <BlogDetails></BlogDetails>,
+      },
+
+
     ],
   },
   {
