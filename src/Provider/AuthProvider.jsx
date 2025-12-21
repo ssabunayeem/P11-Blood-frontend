@@ -1,73 +1,68 @@
-import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithPopup } from 'firebase/auth';
-import React, { createContext, useEffect, useState } from 'react';
-import auth from '../firebase/firebase.config';
-import axios from 'axios';
+import React, { createContext, useEffect, useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithPopup,
+} from "firebase/auth";
+import auth from "./../firebase/firebase.config";
+import axios from "axios";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
-const googleProvider = new GoogleAuthProvider();
-
 const AuthProvider = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
-    const [loading, setLoading] = useState(true)
-    const [user, setUser] = useState(null);
+  const [role, setRole] = useState("");
 
-    const [role, setRole] = useState('');
+  const [userStatus, setUserStatus] = useState("");
 
+  const googleProvider = new GoogleAuthProvider();
 
-    const registerWithEmailPassword = (email, pass) => {
+  const registerWithEmailPassword = (email, pass) => {
+    console.log(email, pass);
 
-        // console.log("from register data: ", email, pass)
-        return createUserWithEmailAndPassword(auth, email, pass)
-    }
+    return createUserWithEmailAndPassword(auth, email, pass);
+  };
 
-    const handleGoogleSignin = () => {
-        return signInWithPopup(auth, googleProvider);
-    }
+  const handleGoogleSignIn = () => {
+    return signInWithPopup(auth, googleProvider);
+  };
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            setLoading(false);
-            console.log(currentUser);
-        })
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
-        return () => {
-            unsubscribe();
-        }
+  useEffect(() => {
+    if (!user) return;
+    axios.get(`http://localhost:5000/users/role/${user.email}`).then((res) => {
+      setRole(res.data.role);
+      setUserStatus(res.data.status);
+      setRoleLoading(false);
+    });
+  }, [user]);
+  console.log(role);
 
-    }, [])
+  const authData = {
+    registerWithEmailPassword,
+    setUser,
+    user,
+    handleGoogleSignIn,
+    loading,
+    role,
+    roleLoading,
+    userStatus,
+  };
 
-
-
-
-    useEffect(() => {
-        if (!user) return;
-        axios.get(`http://localhost:5000/users/role/${user.email}`)
-            .then(res => {
-                setRole(res.data.role);
-            });
-    }, [user]);
-
-    console.log(role);
-
-
-
-
-
-    const authData = {
-        registerWithEmailPassword,
-        loading,
-        setUser,
-        user,
-        handleGoogleSignin,
-        role,
-    }
-
-    return <AuthContext value={authData}>
-        {children}
-    </AuthContext>;
+  return <AuthContext value={authData}>{children}</AuthContext>;
 };
 
 export default AuthProvider;

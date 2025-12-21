@@ -1,207 +1,227 @@
-import React, { useContext, useState } from 'react';
-import { AuthContext } from '../Provider/AuthProvider';
-import { updateProfile } from 'firebase/auth';
-import auth from '../firebase/firebase.config';
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router";
+import { AuthContext } from "../Provider/AuthProvider";
+import { updateProfile } from "firebase/auth";
+import auth from "../firebase/firebase.config";
 import { FcGoogle } from "react-icons/fc";
-import toast, { Toaster } from 'react-hot-toast';
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import axios from 'axios';
-
-
-
-
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+const notify = () => toast(" Successfully Registerd.");
 const Register = () => {
 
-    const { registerWithEmailPassword, setUser, user, handleGoogleSignin } = useContext(AuthContext);
-    const [showPassword, setShowPassword] = useState(false);
+  /*  const { registerWithEmailPassword, user, setUser, handleGoogleSignIn } =
+     useContext(AuthContext); */
 
+  const { registerWithEmailPassword, user, setUser } =
+    useContext(AuthContext);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const email = e.target.email.value;
-        const pass = e.target.password.value;
-        const name = e.target.name.value;
-        const photoUrl = e.target.photoUrl;
-        const file = photoUrl.files[0];
-        const role = e.target.role.value;
+  const [upazilas, setUpazilas] = useState([]);
 
+  const [districts, setDistricts] = useState([]);
 
+  const [district, setDistrict] = useState("");
 
+  const [upozila, setUpozila] = useState("");
 
+  useEffect(() => {
+    axios.get("./upazila.json").then((res) => {
+      setUpazilas(res.data.upazilas);
+    });
 
+    axios.get("./district.json").then((res) => {
+      setDistricts(res.data.districts);
+    });
+  }, []);
+  console.log(upazilas);
 
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const pass = e.target.password.value;
+    const name = e.target.name.value;
+    const photourl = e.target.photoUrl;
+    const BloodGroup = e.target.BloodGroup.value;
 
-        const uppercase = /[A-Z]/;
-        const lowercase = /[a-z]/;
+    const file = photourl.files[0];
+    const uppercase = /[A-Z]/;
+    const lowercase = /[a-z]/;
 
-        if (pass.length < 6) {
-            return toast("less than 6 character")
-        }
-        if (!uppercase.test(pass)) {
-            return toast("need a Uppercase")
-        }
-        if (!lowercase.test(pass)) {
-            return toast("need a lowercase")
-        }
-
-
-
-        const res = await axios.post(`https://api.imgbb.com/1/upload?key=f57dd31b60f91b1c6b01c96eab4a817f`, { image: file },
-            {
-                headers: { "Content-Type": "multipart/form-data" },
-            }
-        );
-
-        const mainPhotoUrl = res.data.data.display_url;
-
-        const formData = {
-            email,
-            pass,
-            name,
-            mainPhotoUrl,
-            role,
-            // BloodGroup,
-            // district,
-            // upozila,
-        };
-
-
-
-
-        if (res.data.success == true) {
-
-            registerWithEmailPassword(email, pass)
-                .then((userCredential) => {
-
-                    updateProfile(auth.currentUser, {
-                        displayName: name, photoURL: mainPhotoUrl
-                    }).then(() => {
-                        setUser(userCredential.user)
-
-
-                        axios.post('http://localhost:5000/users', formData)
-                            .then(res => {
-                                console.log(res.data);
-                            })
-                            .catch(err => {
-                                console.log(err);
-
-                            })
-
-
-
-                    }).catch((error) => {
-                        console.log(error)
-                    });
-
-                })
-                .catch(err => {
-                    console.log(err);
-
-                })
-        }
-
+    if (pass.length < 6) {
+      return alert("less than 6 characters");
+    }
+    if (!uppercase.test(pass)) {
+      return alert("Need a UpperCase");
+    }
+    if (!lowercase.test(pass)) {
+      return alert("Need a Lower Case");
     }
 
-
-    console.log(user)
-
-
-    const googleSignup = () => {
-        handleGoogleSignin()
-            .then(result => {
-                const user = result.user
-                setUser(user)
-            })
-            .catch(err => console.log(err))
-    }
-
-    return (
-        <div>
-            <div className='flex flex-col  gap-5 justify-center items-center p-7'>
-
-
-                <div className='bg-rose-700 text-center shadow-2xl p-5 md:px-15 md:py-10 rounded-t-full rounded-b-3xl'>
-                    <div className='bg-linear-to-r from-cyan-300 via-white to-sky-400 bg-clip-text text-transparent'>
-                        <a className="text-2xl lg:text-4xl font-bold">Blood Donation</a>
-                    </div>
-
-                </div>
-
-                <div className="card bg-rose-300 w-87.5 md:w-162.5 md:p-8 shrink-0 shadow-2xl rounded-4xl">
-                    <div className="card-body">
-                        <form onSubmit={handleSubmit} className="fieldset">
-
-                            <label className="label text-lg">Name</label>
-                            <input name='name' type="text" className="input w-full py-6 text-lg rounded-full" placeholder="Your Name" />
-
-                            <label className="label text-lg">PhotoUrl</label>
-                            <input name='photoUrl' type="file" className="input w-full pt-2  rounded-full" placeholder="" />
-
-
-
-
-                            <label className="label text-lg">User Role</label>
-
-                            <select
-
-                                name='role'
-                                defaultValue='choose role'
-                                className=" select w-full p-2 text-lg rounded-full mt-1 bg-white">
-
-                                <option defaultValue="">Select your Role</option>
-                                <option value="manager">Manager</option>
-                                <option value="buyer">Buyer</option>
-
-                            </select>
-
-
-
-
-
-                            <label className="label text-lg">Email</label>
-                            <input name='email' type="email" className="input w-full py-6 text-lg rounded-full" placeholder="Email" />
-
-                            <label className="label text-lg">Password</label>
-                            <div className="relative">
-                                <input
-                                    name='password'
-                                    type={showPassword ? "text" : "password"}
-                                    className="input w-full py-6 text-lg rounded-full pr-16"
-                                    placeholder="Password"
-                                />
-
-                                <span
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-5 top-1/2 -translate-y-1/2 cursor-pointer text-xl"
-                                >
-                                    {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
-
-                                </span>
-                            </div>
-
-                            <button className="btn btn-neutral rounded-xl bg-[#6F00FF] mt-4 py-6 text-lg">Register</button>
-                            <Toaster
-                                toastOptions={{
-                                    style: {
-                                        fontSize: '28px',     // text-5xl এর মতো
-                                        padding: '20px',      // p-5 এর মতো
-                                        borderRadius: '12px',
-                                    },
-                                }}
-                            />
-                            <p className='text-base mt-2'>Sign up With... </p>
-
-                            <button onClick={googleSignup} className="btn py-6 text-lg text-gray-500 rounded-full"><FcGoogle />Google </button>
-
-
-                        </form>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    const res = await axios.post(
+      `https://api.imgbb.com/1/upload?key=f57dd31b60f91b1c6b01c96eab4a817f`,
+      { image: file },
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
     );
+
+    const mainUrl = res.data.data.display_url;
+
+    const formData = {
+      email,
+      pass,
+      name,
+      mainUrl,
+      BloodGroup,
+      district,
+      upozila,
+    };
+
+    if (res.data.success == true) {
+      registerWithEmailPassword(email, pass)
+        .then((userCredential) => {
+          updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: mainUrl,
+          })
+            .then(() => {
+              setUser(userCredential.user);
+              axios
+                .post("http://localhost:5000/users", formData)
+                .then((res) => {
+                  console.log(res.data);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  // const googleSignUp = () => {
+  //   handleGoogleSignIn()
+  //     .then((result) => {
+  //       const user = result.user;
+  //       setUser(user);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+
+  console.log(user);
+
+  return (
+    <div>
+      <div className="hero bg-base-200 min-h-screen">
+        <div className="hero-content flex-col lg:flex-row-reverse">
+          <div className="card bg-base-100 w-100 max-w-sm shrink-0 shadow-2xl">
+            <div className="card-body">
+              <form onSubmit={handelSubmit} className="fieldset">
+                <label className="label">Email</label>
+                <input
+                  name="email"
+                  type="email"
+                  className="input"
+                  placeholder="Email"
+                />
+                <label className="label">Name</label>
+                <input
+                  name="name"
+                  type="text"
+                  className="input"
+                  placeholder="Your Name"
+                />
+                <label className="label">PhotoURL</label>
+                <input
+                  name="photoUrl"
+                  type="file"
+                  className="input"
+                  placeholder="Your PhotoUrl"
+                />
+                <select
+                  name="BloodGroup"
+                  defaultValue="Choose Blood Group"
+                  className="select"
+                >
+                  <option disabled={true}>Choose Blood Group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB-">AB-</option>
+                  <option value="AB+">AB+</option>
+                </select>
+
+                <select
+                  value={district}
+                  onChange={(e) => {
+                    setDistrict(e.target.value);
+                  }}
+                  className="select"
+                >
+                  <option disabled selected value="">
+                    District Name
+                  </option>
+                  {districts.map((d) => (
+                    <option value={d?.name} key={d?.id}>
+                      {d?.name}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={upozila}
+                  onChange={(e) => {
+                    setUpozila(e.target.value);
+                  }}
+                  className="select"
+                >
+                  <option disabled selected value="">
+                    Upazila Name
+                  </option>
+                  {upazilas.map((u) => (
+                    <option value={u?.name} key={u?.id}>
+                      {u?.name}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="label">Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  className="input"
+                  placeholder="Password"
+                />
+                {/* <div>
+                  <a className="link link-hover">Forgot password?</a>
+                </div> */}
+                {/* <button onClick={googleSignUp} className="btn  ">
+                  <FcGoogle />Go o g l e
+                </button> */}
+                <div>
+                  <span>Already have an account? </span>
+                  <Link className="text-blue-500 font-medium" to="/login">
+                    Login
+                  </Link>
+                </div>
+                <button onClick={notify} className="btn btn-neutral mt-4">
+                  Register
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Toaster />
+    </div>
+  );
 };
 
 export default Register;
