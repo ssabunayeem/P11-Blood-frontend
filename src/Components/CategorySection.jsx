@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
+import { motion } from "framer-motion"; // eslint-disable-line no-unused-vars
 
 import img1 from "../assets/logo.png";
 import img2 from "../assets/logo.png";
@@ -39,6 +40,11 @@ const categories = [
     },
 ];
 
+const cardVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1 },
+};
+
 const CategorySection = () => {
     const navigate = useNavigate();
 
@@ -57,31 +63,37 @@ const CategorySection = () => {
             {/* Category Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {categories.map((cat, index) => (
-                    <div
+                    <motion.div
                         key={index}
                         onClick={() => navigate(cat.path)}
                         data-tooltip-id="category-tooltip"
                         data-tooltip-content={cat.tooltip}
-                        className="relative rounded-xl overflow-hidden cursor-pointer group text-white shadow-lg"
+                        variants={cardVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.5, delay: index * 0.2 }}
+                        whileHover={{ scale: 1.05 }}
+                        className="relative rounded-xl overflow-hidden cursor-pointer group shadow-lg"
                     >
                         {/* Background Image */}
                         <img
                             src={cat.image}
                             alt={cat.name}
-                            className="w-full h-57.5 object-cover group-hover:scale-110 transition-all duration-500"
+                            className="w-full h-56 object-cover group-hover:scale-110 transition-all duration-500"
                         />
 
                         {/* Overlay */}
-                        <div className="absolute inset-0 bg-red-900/50 group-hover:bg-red-900/70 transition"></div>
+                        <div className="absolute inset-0 bg-gray-900/60 group-hover:bg-red-700/40 transition"></div>
 
                         {/* Text */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-4xl mb-2">{cat.icon}</span>
-                            <h2 className="text-2xl font-semibold drop-shadow text-white!">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                            <span className="text-5xl mb-2 animate-bounce">{cat.icon}</span>
+                            <h2 className="text-2xl font-semibold text-white! drop-shadow-lg text-center">
                                 {cat.name}
                             </h2>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
 

@@ -1,17 +1,14 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { signOut } from "firebase/auth";
 import auth from "../../firebase/firebase.config";
 import logo from "../../assets/logo.png";
-import styles from "./Navbar.module.css";
 import { MdDashboard, MdLogout, MdLogin } from "react-icons/md";
-
-
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "All Request", path: "/all-request" },
+  { name: "All Requests", path: "/all-request" },
   { name: "Search", path: "/search-request" },
   { name: "Donate", path: "/donate" },
   { name: "All Blogs", path: "/blogs" },
@@ -34,7 +31,9 @@ const Navbar = () => {
         <NavLink
           to={path}
           className={({ isActive }) =>
-            isActive ? styles.active : undefined
+            isActive
+              ? "text-white font-semibold border-b-2 border-white transition-all"
+              : "text-white hover:text-gray-200 transition-all"
           }
         >
           {name}
@@ -43,94 +42,87 @@ const Navbar = () => {
     ));
 
   return (
-    <div className="navbar bg-rose-200 shadow-sm  font-semibold px-4">
-      {/* LEFT */}
-      <div className="navbar-start">
-        {/* Mobile Menu */}
-        <div className="dropdown">
-          <label tabIndex={0} className="btn btn-ghost lg:hidden">
-            ☰
-          </label>
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 w-52 rounded-box bg-base-100 shadow"
-          >
-            {renderLinks()}
-          </ul>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-red-600 to-rose-700 shadow-md text-white">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+
+        {/* LEFT: Logo + Mobile Menu */}
+        <div className="flex items-center gap-4">
+          {/* Mobile menu button */}
+          <div className="lg:hidden dropdown">
+            <label tabIndex={0} className="btn btn-ghost btn-circle">
+              ☰
+            </label>
+            <ul
+              tabIndex={0}
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-red-700 rounded-box w-52 text-white"
+            >
+              {renderLinks()}
+            </ul>
+          </div>
+
+          {/* Logo */}
+          <NavLink to="/" className="flex items-center gap-3">
+            <img
+              src={logo}
+              alt="YIM BloodBank Logo"
+              className="w-10 h-10 rounded-full border-2 border-white"
+            />
+            <span className="font-bold text-xl hidden md:block">YIM BloodBank</span>
+          </NavLink>
         </div>
 
-        {/* Logo */}
-        <NavLink to="/" className="flex items-center gap-3 btn btn-ghost ">
-          <img
-            src={logo}
-            alt="YIM BloodBank Logo"
-            className="w-10 h-10 rounded-full border-2 border-rose-500"
-          />
-          <span className="hidden md:block text-rose-500 font-bold text-xl">
-            YIM BloodBank
-          </span>
-        </NavLink>
-      </div>
-
-      {/* CENTER (Desktop) */}
-      <div className="navbar-center hidden lg:flex ">
-        <ul className="menu menu-horizontal gap-2">
+        {/* CENTER: Desktop Links */}
+        <ul className="hidden lg:flex gap-6">
           {renderLinks()}
         </ul>
+
+        {/* RIGHT: Auth Buttons */}
+        <div className="flex items-center gap-4 ">
+          {!user ? (
+            <NavLink
+              to="/login"
+              className="btn btn-outline text-base border-white text-white hover:bg-white hover:text-red-600 transition-all"
+            >
+              <MdLogin className="mr-1 text-2xl" /> Login
+            </NavLink>
+          ) : (
+            <div className="dropdown dropdown-end">
+              {/* Avatar */}
+              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full ring ring-white ring-offset-2">
+                  <img
+                    src={user?.photoURL || "/avatar.png"}
+                    alt="User profile"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+              </label>
+
+              {/* Dropdown */}
+              <ul
+                tabIndex={0}
+                className="menu dropdown-content mt-3 p-2 shadow bg-red-700 rounded-box w-48 text-white"
+              >
+                <li>
+                  <NavLink to="/dashboard" className="flex items-center gap-2 hover:bg-red-600 px-2 py-2 rounded">
+                    <MdDashboard /> Dashboard
+                  </NavLink>
+                </li>
+                <li className="border-t border-red-600 mt-1 pt-1">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full hover:bg-red-600 px-2 py-2 rounded text-white"
+                  >
+                    <MdLogout className="text-2xl" /> Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+
       </div>
-
-      {/* RIGHT */}
-      <div className="navbar-end gap-3">
-
-        {/* Dashboard – Primary Action */}
-        <NavLink
-          to="/dashboard"
-          className="btn btn-outline border-2 border-rose-500 text-rose-500 font-bold
-               hover:bg-rose-500 hover:text-white 
-               transition-all duration-200 ease-in-out
-               hover:scale-105"
-        >
-          <MdDashboard className="text-lg" />
-
-          Dashboard
-        </NavLink>
-
-
-        {/* Auth Button */}
-        {user ? (
-
-          <button
-            onClick={handleLogout}
-            className="btn btn-outline border-2 border-rose-500 text-rose-500 font-bold
-               hover:bg-rose-500 hover:text-white 
-               transition-all duration-200 ease-in-out
-               hover:scale-105"
-          >
-            <MdLogout className='text-2xl' />
-            Logout
-          </button>
-        ) : (
-          <NavLink
-            to="/login"
-            className="btn btn-outline border-2 border-rose-500 text-rose-500 
-               hover:bg-rose-500 hover:text-white 
-               transition-all duration-200 ease-in-out
-               hover:scale-105"
-          >
-            <MdLogin className='text-2xl' />
-            Login
-          </NavLink>
-
-        )}
-
-        <img
-          src={user?.photoURL}
-          alt="User"
-          className="w-10 h-10 rounded-full border-2 border-red-500 object-cover"
-        />
-      </div>
-
-    </div>
+    </nav>
   );
 };
 

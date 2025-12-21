@@ -1,69 +1,122 @@
-import { NavLink } from "react-router";
-import { LayoutDashboard, Users, LogOut, NotebookPen } from "lucide-react";
+import { NavLink, Link } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Users,
+  LogOut,
+  NotebookPen,
+  Home
+} from "lucide-react";
 import { MdOutlineAddCircle } from "react-icons/md";
 import { useContext } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 import { signOut } from "firebase/auth";
-import auth from "./../../firebase/firebase.config";
+import auth from "../../firebase/firebase.config";
+import logo from "../../assets/logo.png";
 
-const Aside = () => {
+const Aside = ({ isOpen, setIsOpen }) => {
   const { role } = useContext(AuthContext);
 
   const handleLogOut = () => {
     signOut(auth);
   };
 
-  const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
-      isActive
-        ? "bg-indigo-600 text-white shadow-md"
-        : "text-gray-300 hover:bg-gray-800 hover:text-white"
+  const menuItemClass = ({ isActive }) =>
+    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+     ${isActive
+      ? "bg-rose-600 text-white shadow-md"
+      : "text-slate-300 hover:bg-slate-800 hover:text-white"
     }`;
 
   return (
-    <aside className="w-64 min-h-screen bg-gray-900 flex flex-col">
-      {/* Logo / Header */}
-      <div className="px-6 py-5 border-b border-gray-800">
-        <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
-        <p className="text-sm text-gray-400">Control Dashboard</p>
+    <aside
+      className={`
+        fixed top-0 left-0 w-72 h-screen z-40
+        bg-slate-900 border-r border-slate-800
+        transform transition-transform duration-300 shadow-xl
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0
+      `}
+    >
+      {/* Header / Brand */}
+      <div className="py-6 px-4 mb-4 border-b border-slate-800 flex flex-col items-center">
+        <img
+          src={logo}
+          alt="YIM Blood Donation"
+          className="w-20 h-20 rounded-full border-2 border-rose-500 mb-2"
+        />
+        <h2 className="text-xl font-bold text-white">YIM Blood</h2>
+        <p className="text-sm text-slate-400">Donation Dashboard</p>
       </div>
 
       {/* Menu */}
-      <nav className="flex-1 px-4 py-6 space-y-2">
-        <NavLink to="/dashboard" className={linkClass}>
+      <nav className="px-4 space-y-1 text-[15px] font-medium">
+        <NavLink
+          to="/dashboard"
+          end
+          onClick={() => setIsOpen(false)}
+          className={menuItemClass}
+        >
           <LayoutDashboard size={20} />
           Dashboard
         </NavLink>
 
-        {role == "donor" && (
-          <NavLink to="/dashboard/add-request" className={linkClass}>
+        {role === "donor" && (
+          <NavLink
+            to="/dashboard/add-request"
+            onClick={() => setIsOpen(false)}
+            className={menuItemClass}
+          >
             <MdOutlineAddCircle size={20} />
             Add Request
           </NavLink>
         )}
 
-        {role == "admin" && (
-          <NavLink to="/dashboard/all-users" className={linkClass}>
+        <NavLink
+          to="/dashboard/my-request"
+          onClick={() => setIsOpen(false)}
+          className={menuItemClass}
+        >
+          <NotebookPen size={20} />
+          My Requests
+        </NavLink>
+
+        {role === "admin" && (
+          <NavLink
+            to="/dashboard/all-users"
+            onClick={() => setIsOpen(false)}
+            className={menuItemClass}
+          >
             <Users size={20} />
             All Users
           </NavLink>
         )}
-
-        <NavLink to="/dashboard/my-request" className={linkClass}>
-          <NotebookPen size={20} />
-          My Request
-        </NavLink>
       </nav>
 
-      {/* Footer */}
-      <div className="px-4 py-4 border-t border-gray-800">
-        <button
+      {/* Footer: Home + Logout */}
+      <div className="absolute bottom-4 left-0 w-full px-4 flex flex-col gap-2">
+        <Link
+          to="/"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-3 w-full px-4 py-3
+          rounded-lg text-slate-300 font-semibold
+          border border-slate-700 hover:bg-slate-800 hover:text-white
+          transition"
+        >
+          <Home size={20} />
+          Home
+        </Link>
+
+        <Link
+          to="/login"
           onClick={handleLogOut}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500 hover:text-white transition"
+          className="flex items-center gap-3 w-full px-4 py-3
+          rounded-lg text-rose-400 font-semibold
+          border border-slate-700 hover:bg-rose-600 hover:text-white
+          transition"
         >
           <LogOut size={20} />
           Logout
-        </button>
+        </Link>
       </div>
     </aside>
   );
