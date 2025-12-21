@@ -26,7 +26,7 @@ const Blogs = () => {
                 Blood Donation Blogs
             </h2>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-15">
                 {blogs.map(blog => (
                     <div key={blog.id} className="card bg-base-100 shadow-md">
                         <figure>
@@ -40,11 +40,13 @@ const Blogs = () => {
                         <div className="card-body">
                             <h3 className="card-title">{blog.title}</h3>
                             <p>{blog.shortDescription}</p>
+                            <p className="font-semibold">{blog.author}</p>
+                            <p className="font-semibold">{blog.publishedDate}</p>
 
                             <div className="card-actions justify-end">
                                 <Link
                                     to={`/blogs/${blog.id}`}
-                                    className="btn btn-primary btn-sm"
+                                    className="btn btn-primary btn-block bg-rose-400 border-0 text-white"
                                 >
                                     Show Details
                                 </Link>

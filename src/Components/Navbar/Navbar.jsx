@@ -14,7 +14,7 @@ const navLinks = [
   { name: "All Request", path: "/all-request" },
   { name: "Search", path: "/search-request" },
   { name: "Donate", path: "/donate" },
-  { name: "Blogs", path: "/blogs" },
+  { name: "All Blogs", path: "/blogs" },
 ];
 
 const Navbar = () => {
@@ -43,7 +43,7 @@ const Navbar = () => {
     ));
 
   return (
-    <div className="navbar bg-rose-100 shadow-sm  font-semibold px-4">
+    <div className="navbar bg-rose-200 shadow-sm  font-semibold px-4">
       {/* LEFT */}
       <div className="navbar-start">
         {/* Mobile Menu */}
