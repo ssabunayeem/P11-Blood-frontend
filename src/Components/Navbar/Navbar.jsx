@@ -81,6 +81,7 @@ const Navbar = () => {
 
       {/* RIGHT */}
       <div className="navbar-end gap-3">
+
         {/* Dashboard – Primary Action */}
         <NavLink
           to="/dashboard"
@@ -94,8 +95,10 @@ const Navbar = () => {
           Dashboard
         </NavLink>
 
+
         {/* Auth Button */}
         {user ? (
+
           <button
             onClick={handleLogout}
             className="btn btn-outline border-2 border-rose-500 text-rose-500 font-bold
@@ -117,7 +120,14 @@ const Navbar = () => {
             <MdLogin className='text-2xl' />
             Login
           </NavLink>
+
         )}
+
+        <img
+          src={user?.photoURL}
+          alt="User"
+          className="w-10 h-10 rounded-full border-2 border-red-500 object-cover"
+        />
       </div>
 
     </div>

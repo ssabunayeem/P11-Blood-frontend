@@ -68,7 +68,7 @@ const CategorySection = () => {
                         <img
                             src={cat.image}
                             alt={cat.name}
-                            className="w-full h-[230px] object-cover group-hover:scale-110 transition-all duration-500"
+                            className="w-full h-57.5 object-cover group-hover:scale-110 transition-all duration-500"
                         />
 
                         {/* Overlay */}
@@ -77,7 +77,7 @@ const CategorySection = () => {
                         {/* Text */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                             <span className="text-4xl mb-2">{cat.icon}</span>
-                            <h2 className="text-2xl font-semibold drop-shadow">
+                            <h2 className="text-2xl font-semibold drop-shadow text-white!">
                                 {cat.name}
                             </h2>
                         </div>

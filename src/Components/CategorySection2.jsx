@@ -65,7 +65,7 @@ const CategorySection = () => {
                         <img
                             src={cat?.image}
                             alt={cat?.name}
-                            className="w-full h-[220px] object-cover group-hover:scale-110 transition-all duration-500"
+                            className="w-full h-55 object-cover group-hover:scale-110 transition-all duration-500"
                         />
 
                         {/* Dark Overlay */}
