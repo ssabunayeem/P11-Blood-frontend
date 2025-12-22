@@ -23,14 +23,14 @@ const Slider = () => {
     }, []);
 
     return (
-        <div className="relative w-full h-[600px] md:h-[800px] overflow-hidden">
+        <div className="relative w-full h-150 md:h-200 overflow-hidden">
             {/* Background Images */}
             <AnimatePresence>
                 <motion.img
                     key={current}
                     src={images[current]}
                     alt={`Slide ${current + 1}`}
-                    className="absolute w-full h-full object-cover"
+                    className="absolute w-full h-full object-contain md:object-cover top-0 left-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -39,7 +39,7 @@ const Slider = () => {
             </AnimatePresence>
 
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-red-900/30 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-b from-black/80 via-indigo-900/40 to-rose-900/80" />
 
             {/* Text & Buttons */}
             <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-20">
