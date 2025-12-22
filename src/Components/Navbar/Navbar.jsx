@@ -42,7 +42,7 @@ const Navbar = () => {
     ));
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-gradient-to-r from-red-600 to-rose-700 shadow-md text-white">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-linear-to-r from-red-600 to-rose-700 shadow-md text-white">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
 
         {/* LEFT: Logo + Mobile Menu */}
