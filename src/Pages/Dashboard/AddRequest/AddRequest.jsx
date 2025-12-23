@@ -1,204 +1,78 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../Provider/AuthProvider";
-import axios from "axios";
 import useAxiosSecure from "../../../hooks/useAxiosSecqure";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const AddRequest = () => {
   const { user } = useContext(AuthContext);
-  const [upazilas, setUpazilas] = useState([]);
-
-  const [districts, setDistricts] = useState([]);
-
-  const [district, setDistrict] = useState("");
-
-  const [upozila, setUpozila] = useState("");
-
   const axiosSecure = useAxiosSecure();
 
-  useEffect(() => {
-    axios.get("../upazila.json").then((res) => {
-      setUpazilas(res.data.upazilas);
-    });
+  const [districts, setDistricts] = useState([]);
+  const [upazilas, setUpazilas] = useState([]);
 
-    axios.get("../district.json").then((res) => {
-      setDistricts(res.data.districts);
-    });
+  useEffect(() => {
+    axios.get("/district.json").then(res => setDistricts(res.data.districts));
+    axios.get("/upazila.json").then(res => setUpazilas(res.data.upazilas));
   }, []);
 
-  const handleRequest = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
 
-    const requester_name = form.recipientName.value;
-    const requester_email = form.requester_email.value;
-    const requester_district = form.requester_district.value;
-    const requester_upazila = form.requester_upazila.value;
-    const hospitalName = form.hospitalName.value;
-    const fullAddress = form.fullAddress.value;
-    const bloodGroup = form.bloodGroup.value;
-    const donationDate = form.donationDate.value;
-    const donationTime = form.donationTime.value;
-    const requestMessage = form.requestMessage.value;
-
-    const formData = {
-      requester_name,
-      requester_email,
-      requester_district,
-      requester_upazila,
-      hospitalName,
-      fullAddress,
-      bloodGroup,
-      donationDate,
-      donationTime,
-      requestMessage,
-      donation_status: "pending",
+    const requestData = {
+      requester_name: user.displayName,
+      requester_email: user.email,
+      requester_district: form.district.value,
+      requester_upazila: form.upazila.value,
+      hospitalName: form.hospitalName.value,
+      fullAddress: form.fullAddress.value,
+      bloodGroup: form.bloodGroup.value,
+      donationDate: form.donationDate.value,
+      donationTime: form.donationTime.value,
+      requestMessage: form.message.value,
     };
 
-    axiosSecure
-      .post("/requests", formData)
-      .then((res) => {
-        alert(res.data.insertedId);
-      })
-      .catch((err) => console.log(err));
+    try {
+      await axiosSecure.post("/requests", requestData);
+      toast.success("Donation request created 🩸");
+      form.reset();
+    } catch {
+      toast.error("Failed to create request");
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow">
-      <h2 className="text-2xl font-semibold mb-6 text-center">
-        Blood Donation Request Form
-      </h2>
+    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white rounded-xl space-y-4">
+      <input value={user.displayName} readOnly className="input w-full bg-gray-100" />
+      <input value={user.email} readOnly className="input w-full bg-gray-100" />
 
-      <form onSubmit={handleRequest} className="space-y-4">
-        {/* Requester Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            value={user?.displayName}
-            type="text"
-            readOnly
-            className="input input-bordered w-full bg-gray-100"
-          />
+      <select name="district" required className="select w-full">
+        <option value="">Select District</option>
+        {districts.map(d => <option key={d.id}>{d.name}</option>)}
+      </select>
 
-          <input
-            name="requester_email"
-            value={user?.email}
-            type="email"
-            readOnly
-            className="input input-bordered w-full bg-gray-100"
-          />
-        </div>
+      <select name="upazila" required className="select w-full">
+        <option value="">Select Upazila</option>
+        {upazilas.map(u => <option key={u.id}>{u.name}</option>)}
+      </select>
 
-        {/* Recipient Info */}
-        <input
-          type="text"
-          name="recipientName"
-          placeholder="Recipient Name"
-          required
-          className="input input-bordered w-full"
-        />
+      <input name="hospitalName" placeholder="Hospital Name" className="input w-full" required />
+      <input name="fullAddress" placeholder="Full Address" className="input w-full" required />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <select
-            name="requester_district"
-            value={district}
-            onChange={(e) => {
-              setDistrict(e.target.value);
-            }}
-            className="select"
-          >
-            <option disabled selected value="">
-              District Name
-            </option>
-            {districts.map((d) => (
-              <option value={d?.name} key={d?.id}>
-                {d?.name}
-              </option>
-            ))}
-          </select>
+      <select name="bloodGroup" required className="select w-full">
+        {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map(bg =>
+          <option key={bg}>{bg}</option>
+        )}
+      </select>
 
-          <select
-            name="requester_upazila"
-            value={upozila}
-            onChange={(e) => {
-              setUpozila(e.target.value);
-            }}
-            className="select"
-          >
-            <option disabled selected value="">
-              Upazila Name
-            </option>
-            {upazilas.map((u) => (
-              <option value={u?.name} key={u?.id}>
-                {u?.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      <input type="date" name="donationDate" required className="input w-full" />
+      <input type="time" name="donationTime" required className="input w-full" />
 
-        {/* Hospital & Address */}
-        <input
-          type="text"
-          name="hospitalName"
-          placeholder="Hospital Name"
-          required
-          className="input input-bordered w-full"
-        />
+      <textarea name="message" className="textarea w-full" required />
 
-        <input
-          type="text"
-          name="fullAddress"
-          placeholder="Full Address"
-          required
-          className="input input-bordered w-full"
-        />
-
-        {/* Blood Group */}
-        <select
-          name="bloodGroup"
-          required
-          className="select select-bordered w-full"
-        >
-          <option value="">Select Blood Group</option>
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
-          <option value="AB-">AB-</option>
-          <option value="AB+">AB+</option>
-        </select>
-
-        {/* Date & Time */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="date"
-            name="donationDate"
-            required
-            className="input input-bordered w-full"
-          />
-
-          <input
-            type="time"
-            name="donationTime"
-            required
-            className="input input-bordered w-full"
-          />
-        </div>
-
-        {/* Message */}
-        <textarea
-          name="requestMessage"
-          placeholder="Explain why blood is needed"
-          required
-          className="textarea textarea-bordered w-full h-32"
-        />
-
-        {/* Submit */}
-        <button type="submit" className="btn btn-secondary w-full">
-          Request
-        </button>
-      </form>
-    </div>
+      <button className="btn btn-secondary w-full">Create Request</button>
+    </form>
   );
 };
 

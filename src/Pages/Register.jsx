@@ -52,7 +52,7 @@ const Register = () => {
       setUser(userCredential.user);
 
       // Send user data to backend
-      await axios.post("https://p11-blood-backend.vercel.app/users", {
+      await axios.post("http://localhost:5000/users", {
         email,
         name,
         bloodGroup,
@@ -72,7 +72,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-red-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="bg-white shadow-2xl rounded-2xl w-full max-w-lg p-8 md:p-12">
         <div className="text-center mb-6">

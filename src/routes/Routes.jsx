@@ -14,10 +14,14 @@ import MyRequest from "../pages/Dashboard/MyRequest/MyRequest";
 import Donate from "../pages/Donate/Donate";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import SearchRequest from "../pages/searchRequest/SearchRequest";
-import AllRequest from "../pages/AllRequest";
 import Blogs from "../pages/Blogs";
 import BlogDetails from "../pages/BlogDeatils";
 import Profile from "../pages/Dashboard/Profile/Profile";
+import DashboardHome from "../pages/Dashboard/DashboardHome";
+import AllRequestsPublic from "../pages/AllRequestsPublic";
+import AllRequestsAdmin from "../pages/Admin/AllRequestsAdmin";
+import DonationDetails from "../pages/DonationDetails/DonationDetails";
+import EditRequest from "../pages/Dashboard/EditRequest/EditRequest";
 
 
 
@@ -31,8 +35,12 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
       {
-        path: "/all-request",
-        element: <AllRequest></AllRequest>,
+        path: "/all-request-public",
+        element: <AllRequestsPublic></AllRequestsPublic>,
+      },
+      {
+        path: "/donation-request/:id",
+        element: <DonationDetails></DonationDetails>,
       },
       {
         path: "/login",
@@ -80,24 +88,34 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/dashboard",
-        element: <MainDashboardLayout />,
+        element: <DashboardHome></DashboardHome>
       },
       {
-        path: "add-request",
+        path: "/dashboard/add-request",
         element: <AddRequest />,
       },
       {
-        path: "all-users",
+        path: "/dashboard/all-users",
         element: <AllUsers />,
       },
       {
-        path: "my-request",
+        path: "/dashboard/my-request",
         element: <MyRequest />,
       },
       {
-        path: "profile",
+        path: "/dashboard/profile",
         element: <Profile />,
-      }
+      },
+      {
+        path: "/dashboard/all-requests-admin",
+        element: <AllRequestsAdmin />,
+      },
+      {
+        path: "/dashboard/edit-request/:id",
+        element: <EditRequest />,
+      },
+
+
 
     ],
   },

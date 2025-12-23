@@ -1,85 +1,146 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { AuthContext } from "../../../Provider/AuthProvider";
 import useAxiosSecure from "../../../hooks/useAxiosSecqure";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const MyRequest = () => {
-  const [myRequest, setMyRequest] = useState([]);
-
-  const [totalRequest, setTotalRequest] = useState(0);
-
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  const [currentPage, setCurrentPage] = useState(1);
-
+  const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
 
-  useEffect(() => {
-    axiosSecure
-      .get(`/my-request?page=${currentPage - 1}&size=${itemsPerPage}`)
-      .then((res) => {
-        setMyRequest(res.data.request);
-        setTotalRequest(res.data.totalRequest);
-      });
-  }, [axiosSecure, currentPage, itemsPerPage]);
-  const numberOfPage = Math.ceil(totalRequest / itemsPerPage);
-  const page = [...Array(numberOfPage).keys()].map((e) => e + 1);
+  const [requests, setRequests] = useState([]);
 
-  // console.log(myRequest);
-  // console.log(totalRequest);
-  // console.log(page);
-  const handlePrev = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+  const navigate = useNavigate();
+
+  const fetchRequests = () => {
+    axiosSecure
+      .get(`/my-request?email=${user.email}&page=0&size=100`)
+      .then((res) => {
+        setRequests(res.data.request);
+      })
+      .catch(() => toast.error("Failed to load requests"));
   };
 
-  const handleNext = () => {
-    if (currentPage < page.length) {
-      setCurrentPage(currentPage + 1);
-    }
+  useEffect(() => {
+    if (user?.email) fetchRequests();
+  }, [user]);
+
+  const handleDelete = (id) => {
+    if (!confirm("Are you sure you want to delete?")) return;
+
+    axiosSecure.delete(`/requests/${id}`).then(() => {
+      toast.success("Deleted successfully");
+      fetchRequests();
+    });
+  };
+
+  const handleStatusUpdate = (id, nextStatus) => {
+    axiosSecure
+      .patch(`/requests/update/status/${id}`, { status: nextStatus })
+      .then(() => {
+        toast.success("Status updated");
+        fetchRequests();
+      })
+      .catch(() => toast.error("Update failed"));
   };
 
   return (
     <div>
+      <h2 className="text-2xl font-bold mb-5">My Donation Requests</h2>
       <div className="overflow-x-auto">
-        <table className="table">
-          {/* head */}
+        <table className="table w-full">
           <thead>
             <tr>
-              <th>Req No</th>
-              <th>Name</th>
-              <th>Hospital Name</th>
-              <th> Blood Group</th>
+              <th>#</th>
+              <th>Hospital</th>
+              <th>Blood Group</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {myRequest.map((request, index) => (
-              <tr>
-                <th>{currentPage * 10 + (index + 1) - 10}</th>
-                <td>{request.requester_name} </td>
-                <td>{request.hospitalName} </td>
-                <td>{request.bloodGroup} </td>
+            {requests.map((req, i) => (
+              <tr key={req._id}>
+                <td>{i + 1}</td>
+                <td>{req.hospitalName}</td>
+                <td>{req.bloodGroup}</td>
+                <td>
+                  <span className={`badge ${req.donation_status === "pending"
+                    ? "badge-warning"
+                    : req.donation_status === "inprogress"
+                      ? "badge-info"
+                      : req.donation_status === "done"
+                        ? "badge-success"
+                        : "badge-error"
+                    }`}>
+                    {req.donation_status}
+                  </span>
+                </td>
+
+                <td className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/dashboard/edit-request/${req._id}`)}
+                    className="btn btn-xs  bg-rose-300"
+                  >
+                    Edit
+                  </button>
+                </td>
+
+                <td className="space-x-2">
+                  {/* Pending → inprogress */}
+                  {req.donation_status === "pending" && (
+                    <button
+                      onClick={() =>
+                        handleStatusUpdate(req._id, "inprogress")
+                      }
+                      className="btn btn-xs btn-primary"
+                    >
+                      Start
+                    </button>
+                  )}
+
+                  {/* inprogress → done */}
+                  {req.donation_status === "inprogress" && (
+                    <>
+                      <button
+                        onClick={() =>
+                          handleStatusUpdate(req._id, "done")
+                        }
+                        className="btn btn-xs btn-success"
+                      >
+                        Done
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStatusUpdate(req._id, "cancel")
+                        }
+                        className="btn btn-xs btn-error"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+
+
+
+                  {/* Delete always allowed (pending or cancelled) */}
+                  {(req.donation_status === "pending" ||
+                    req.donation_status === "cancel") && (
+                      <button
+                        onClick={() => handleDelete(req._id)}
+                        className="btn btn-xs btn-error"
+                      >
+                        Delete
+                      </button>
+                    )}
+                </td>
+
+
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="flex justify-center mt-12 gap-4">
-        <button onClick={handlePrev} className="btn mr-4">
-          Pev
-        </button>
-        {page.map((p) => (
-          <button
-            onClick={() => setCurrentPage(p)}
-            className={`btn mr-4 ${
-              p === currentPage ? "bg-[#435585] text-white" : ""
-            }`}
-          >
-            {p}
-          </button>
-        ))}
-        <button onClick={handleNext} className="btn ml-4">
-          Next
-        </button>
       </div>
     </div>
   );

@@ -69,6 +69,18 @@ const Aside = ({ isOpen, setIsOpen }) => {
           Profile
         </NavLink>
 
+        {role === "admin" && (
+          <NavLink
+            to="/dashboard/all-requests-admin"
+            onClick={() => setIsOpen(false)}
+            className={menuItemClass}
+          >
+            <Users size={20} />
+            All Donation Requests
+          </NavLink>
+        )}
+
+
 
         {role === "donor" && (
           <NavLink

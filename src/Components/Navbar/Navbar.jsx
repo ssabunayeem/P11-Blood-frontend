@@ -8,7 +8,7 @@ import { MdDashboard, MdLogout, MdLogin } from "react-icons/md";
 
 const navLinks = [
   { name: "Home", path: "/" },
-  { name: "All Requests", path: "/all-request" },
+  { name: "All Requests", path: "/all-request-public" },
   { name: "Search", path: "/search-request" },
   { name: "Donate", path: "/donate" },
   { name: "All Blogs", path: "/blogs" },
