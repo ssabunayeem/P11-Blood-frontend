@@ -13,6 +13,6 @@ createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-    <Toaster position="top-center" reverseOrder={false} />
+    <Toaster position="top-right" reverseOrder={false} />
   </>
 );

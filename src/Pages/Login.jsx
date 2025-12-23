@@ -22,7 +22,17 @@ const Login = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
       const user = userCredential.user;
       setUser(user);
-      toast.success("Login Successful!");
+      toast.success("Login Successful!", {
+        style: {
+          border: '1px solid #713200',
+          padding: '16px',
+          color: '#713200',
+        },
+        iconTheme: {
+          primary: '#713200',
+          secondary: '#FFFAEE',
+        },
+      });
       navigate(location.state ? location.state : "/");
     } catch (error) {
       console.error(error);

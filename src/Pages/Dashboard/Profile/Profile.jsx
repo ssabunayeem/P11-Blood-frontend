@@ -103,7 +103,7 @@ const Profile = () => {
                 photoURL,
             });
 
-            // toast.success("Profile updated successfully!");
+            toast.success("Profile updated successfully!");
             // setIsEdit(false);
         } catch (err) {
             console.error(err);
@@ -111,10 +111,7 @@ const Profile = () => {
         }
     };
 
-    const updatedata = () => {
-        toast.success("Profile updated successfully!");
-        setIsEdit(false);
-    };
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* Profile Card */}
@@ -282,7 +279,6 @@ const Profile = () => {
                     ) : (
                         <>
                             <button
-                                onClick={() => updatedata()}
                                 type="submit"
                                 className="btn bg-green-600 text-white hover:bg-green-700 transition"
                             >
