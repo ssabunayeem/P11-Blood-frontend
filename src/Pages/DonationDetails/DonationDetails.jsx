@@ -63,7 +63,7 @@ const DonationDetails = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="max-w-3xl mx-auto p-6 bg-white shadow-xl rounded-2xl max-h-screen"
+                className="max-w-3xl mx-auto p-6 my-15 bg-white shadow-xl rounded-2xl max-h-screen"
             >
                 <h2 className="text-3xl font-bold text-red-700 mb-5 text-center">
                     Donation Request Details
@@ -143,7 +143,7 @@ const DonationDetails = () => {
                             onClick={handleDonate}
                             className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transform hover:scale-105 transition"
                         >
-                            Donate Now
+                            Donate Blood
                         </button>
                     </motion.div>
                 )}

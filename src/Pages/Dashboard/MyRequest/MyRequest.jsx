@@ -1,39 +1,33 @@
 import React, { useContext, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import { AuthContext } from "../../../Provider/AuthProvider";
 import useAxiosSecure from "../../../hooks/useAxiosSecqure";
-import { Navigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 
 const MyRequest = () => {
   const { user } = useContext(AuthContext);
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const [requests, setRequests] = useState([]);
-
-  const navigate = useNavigate();
+  const [status, setStatus] = useState("");
+  const [page, setPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const size = 10;
 
   const fetchRequests = () => {
     axiosSecure
-      .get(`/my-request?email=${user.email}&page=0&size=100`)
+      .get(`/my-request?page=${page}&size=${size}&status=${status}`)
       .then((res) => {
         setRequests(res.data.request);
+        setTotal(res.data.totalRequest);
       })
       .catch(() => toast.error("Failed to load requests"));
   };
 
   useEffect(() => {
     if (user?.email) fetchRequests();
-  }, [user]);
-
-  const handleDelete = (id) => {
-    if (!confirm("Are you sure you want to delete?")) return;
-
-    axiosSecure.delete(`/requests/${id}`).then(() => {
-      toast.success("Deleted successfully");
-      fetchRequests();
-    });
-  };
+  }, [user, status, page]);
 
   const handleStatusUpdate = (id, nextStatus) => {
     axiosSecure
@@ -41,106 +35,94 @@ const MyRequest = () => {
       .then(() => {
         toast.success("Status updated");
         fetchRequests();
-      })
-      .catch(() => toast.error("Update failed"));
+      });
   };
 
-  return (
-    <div className="text-white  md:font-bold">
-      <h2 className="text-2xl  text-white! font-bold mb-5">My Donation Requests</h2>
-      <div className="overflow-x-auto">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Hospital</th>
-              <th>Blood Group</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {requests.map((req, i) => (
-              <tr key={req._id} className=" ">
-                <td>{i + 1}</td>
-                <td className="text-white lg:text-xl">{req.hospitalName}</td>
-                <td>{req.bloodGroup}</td>
-                <td>
-                  <span className={`badge ${req.donation_status === "pending"
-                    ? "badge-warning"
-                    : req.donation_status === "inprogress"
-                      ? "badge-info"
-                      : req.donation_status === "done"
-                        ? "badge-success"
-                        : "badge-error"
-                    }`}>
-                    {req.donation_status}
-                  </span>
-                </td>
+  const handleDelete = (id) => {
+    if (!confirm("Delete this request?")) return;
+    axiosSecure.delete(`/requests/${id}`).then(() => {
+      toast.success("Deleted");
+      fetchRequests();
+    });
+  };
 
-                <td className="flex gap-2">
+  const pages = Math.ceil(total / size);
+
+  return (
+    <div>
+      <div className="flex justify-between mb-4">
+        <h2 className="text-xl font-bold">My Donation Requests</h2>
+
+        <select
+          className="select select-bordered"
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value);
+            setPage(0);
+          }}
+        >
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="inprogress">In Progress</option>
+          <option value="done">Done</option>
+          <option value="cancel">Canceled</option>
+        </select>
+      </div>
+
+      <table className="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Hospital</th>
+            <th>Blood</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {requests.map((req, i) => (
+            <tr key={req._id}>
+              <td>{i + 1 + page * size}</td>
+              <td>{req.hospitalName}</td>
+              <td>{req.bloodGroup}</td>
+              <td>
+                <span className="badge">{req.donation_status}</span>
+              </td>
+              <td className="space-x-1">
+                {req.donation_status === "pending" && (
                   <button
+                    className="btn btn-xs"
                     onClick={() => navigate(`/dashboard/edit-request/${req._id}`)}
-                    className="btn btn-xs  bg-rose-300"
                   >
                     Edit
                   </button>
-                </td>
-
-                <td className="space-x-2">
-                  {/* Pending → inprogress */}
-                  {req.donation_status === "pending" && (
+                )}
+                {(req.donation_status === "pending" ||
+                  req.donation_status === "cancel") && (
                     <button
-                      onClick={() =>
-                        handleStatusUpdate(req._id, "inprogress")
-                      }
-                      className="btn btn-xs btn-primary"
+                      className="btn btn-xs btn-error"
+                      onClick={() => handleDelete(req._id)}
                     >
-                      Start
+                      Delete
                     </button>
                   )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-                  {/* inprogress → done */}
-                  {req.donation_status === "inprogress" && (
-                    <>
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(req._id, "done")
-                        }
-                        className="btn btn-xs btn-success"
-                      >
-                        Done
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleStatusUpdate(req._id, "cancel")
-                        }
-                        className="btn btn-xs btn-error"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
-
-
-
-                  {/* Delete always allowed (pending or cancelled) */}
-                  {(req.donation_status === "pending" ||
-                    req.donation_status === "cancel") && (
-                      <button
-                        onClick={() => handleDelete(req._id)}
-                        className="btn btn-xs btn-error"
-                      >
-                        Delete
-                      </button>
-                    )}
-                </td>
-
-
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Pagination */}
+      <div className="flex gap-2 mt-4">
+        {[...Array(pages).keys()].map((p) => (
+          <button
+            key={p}
+            onClick={() => setPage(p)}
+            className={`btn btn-sm ${p === page && "btn-primary"}`}
+          >
+            {p + 1}
+          </button>
+        ))}
       </div>
     </div>
   );

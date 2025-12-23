@@ -1,64 +1,103 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Provider/AuthProvider";
 import useAxiosSecure from "../../hooks/useAxiosSecqure";
+import toast from "react-hot-toast";
 
 const AllRequestsAdmin = () => {
-    const { user } = useContext(AuthContext);
+    const { role } = useContext(AuthContext);
     const axiosSecure = useAxiosSecure();
+
     const [requests, setRequests] = useState([]);
-    const [loading, setLoading] = useState(true);
+
+    const fetchRequests = () => {
+        axiosSecure.get("/admin/requests").then((res) => {
+            setRequests(res.data);
+        });
+    };
 
     useEffect(() => {
-        if (user?.email) {
-            axiosSecure
-                .get("/admin/requests")
-                .then((res) => {
-                    setRequests(res.data);
-                    setLoading(false);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    setLoading(false);
-                });
-        }
-    }, [axiosSecure, user]);
+        fetchRequests();
+    }, []);
 
-    if (loading) return <p>Loading requests...</p>;
-
-    if (requests.length === 0)
-        return <p>No donation requests available.</p>;
-
+    const updateStatus = (id, status) => {
+        axiosSecure
+            .patch(`/requests/update/status/${id}`, { status })
+            .then(() => {
+                toast.success("Status updated");
+                fetchRequests();
+            });
+    };
 
     return (
-        <div className="overflow-x-auto">
-            <table className="table w-full">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Requester</th>
-                        <th>Email</th>
-                        <th>District / Upazila</th>
-                        <th>Hospital</th>
-                        <th>Blood Group</th>
-                        <th>Date / Time</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {requests.map((req, index) => (
-                        <tr key={req._id}>
-                            <td>{index + 1}</td>
-                            <td>{req.requester_name}</td>
-                            <td>{req.requester_email}</td>
-                            <td>{req.requester_district} / {req.requester_upazila}</td>
-                            <td>{req.hospitalName}</td>
-                            <td>{req.bloodGroup}</td>
-                            <td>{req.donationDate} / {req.donationTime}</td>
-                            <td>{req.donation_status}</td>
+        <div className="bg-white/50 p-5">
+            <h2 className="text-2xl font-bold mb-5">All Donation Requests</h2>
+
+            <div className="overflow-x-auto">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Requester</th>
+                            <th>Hospital</th>
+                            <th>Blood</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        {requests.map((req, i) => (
+                            <tr key={req._id}>
+                                <td>{i + 1}</td>
+                                <td>{req.requester_name}</td>
+                                <td>{req.hospitalName}</td>
+                                <td>{req.bloodGroup}</td>
+                                <td>
+                                    <span className="badge badge-outline">
+                                        {req.donation_status}
+                                    </span>
+                                </td>
+
+                                <td className="space-x-2">
+                                    {/* ADMIN + VOLUNTEER */}
+                                    {req.donation_status === "pending" && (
+                                        <button
+                                            onClick={() => updateStatus(req._id, "inprogress")}
+                                            className="btn btn-xs btn-info"
+                                        >
+                                            Start
+                                        </button>
+                                    )}
+
+                                    {req.donation_status === "inprogress" && (
+                                        <>
+                                            <button
+                                                onClick={() => updateStatus(req._id, "done")}
+                                                className="btn btn-xs btn-success"
+                                            >
+                                                Done
+                                            </button>
+                                            <button
+                                                onClick={() => updateStatus(req._id, "cancel")}
+                                                className="btn btn-xs btn-error"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </>
+                                    )}
+
+                                    {/* ADMIN ONLY EXTRA (optional future) */}
+                                    {role === "admin" && (
+                                        <span className="text-xs text-gray-400">
+                                            Admin access
+                                        </span>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

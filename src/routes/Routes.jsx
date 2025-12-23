@@ -22,6 +22,8 @@ import AllRequestsPublic from "../pages/AllRequestsPublic";
 import AllRequestsAdmin from "../pages/Admin/AllRequestsAdmin";
 import DonationDetails from "../pages/DonationDetails/DonationDetails";
 import EditRequest from "../pages/Dashboard/EditRequest/EditRequest";
+import FundingHistory from "../pages/Dashboard/FundingHistory";
+import Error404 from "../pages/Error404";
 
 
 
@@ -114,11 +116,18 @@ const router = createBrowserRouter([
         path: "/dashboard/edit-request/:id",
         element: <EditRequest />,
       },
-
-
+      {
+        path: "/dashboard/funding",
+        element: <FundingHistory />,
+      },
 
     ],
   },
+
+  {
+    path: "*",
+    element: <Error404></Error404>,
+  }
 ]);
 
 export default router;

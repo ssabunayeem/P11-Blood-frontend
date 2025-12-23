@@ -4,7 +4,7 @@ import {
   Users,
   LogOut,
   NotebookPen,
-  Home
+  Home,
 } from "lucide-react";
 import { MdOutlineAddCircle } from "react-icons/md";
 import { useContext } from "react";
@@ -37,7 +37,7 @@ const Aside = ({ isOpen, setIsOpen }) => {
         lg:translate-x-0
       `}
     >
-      {/* Header / Brand */}
+      {/* Brand */}
       <div className="py-6 px-4 mb-4 border-b border-slate-800 flex flex-col items-center">
         <img
           src={logo}
@@ -50,6 +50,7 @@ const Aside = ({ isOpen, setIsOpen }) => {
 
       {/* Menu */}
       <nav className="px-4 space-y-1 text-[15px] font-medium">
+        {/* Dashboard */}
         <NavLink
           to="/dashboard"
           end
@@ -60,6 +61,7 @@ const Aside = ({ isOpen, setIsOpen }) => {
           Dashboard
         </NavLink>
 
+        {/* Profile */}
         <NavLink
           to="/dashboard/profile"
           onClick={() => setIsOpen(false)}
@@ -69,19 +71,19 @@ const Aside = ({ isOpen, setIsOpen }) => {
           Profile
         </NavLink>
 
-        {role === "admin" && (
+        {/* Admin / Volunteer: All Requests (single link, dynamic label) */}
+        {(role === "admin" || role === "volunteer") && (
           <NavLink
             to="/dashboard/all-requests-admin"
             onClick={() => setIsOpen(false)}
             className={menuItemClass}
           >
-            <Users size={20} />
-            All Donation Requests
+            <NotebookPen size={20} />
+            {role === "admin" ? "All Donation Requests" : "All Requests"}
           </NavLink>
         )}
 
-
-
+        {/* Donor: Add Request */}
         {role === "donor" && (
           <NavLink
             to="/dashboard/add-request"
@@ -93,15 +95,19 @@ const Aside = ({ isOpen, setIsOpen }) => {
           </NavLink>
         )}
 
-        <NavLink
-          to="/dashboard/my-request"
-          onClick={() => setIsOpen(false)}
-          className={menuItemClass}
-        >
-          <NotebookPen size={20} />
-          My Donation Requests
-        </NavLink>
+        {/* Donor: My Requests */}
+        {role === "donor" && (
+          <NavLink
+            to="/dashboard/my-request"
+            onClick={() => setIsOpen(false)}
+            className={menuItemClass}
+          >
+            <NotebookPen size={20} />
+            My Donation Requests
+          </NavLink>
+        )}
 
+        {/* Admin: All Users */}
         {role === "admin" && (
           <NavLink
             to="/dashboard/all-users"
@@ -112,9 +118,22 @@ const Aside = ({ isOpen, setIsOpen }) => {
             All Users
           </NavLink>
         )}
+
+        {role === "admin" && (
+          <NavLink
+            to="/dashboard/funding"
+            onClick={() => setIsOpen(false)}
+            className={menuItemClass}
+          >
+            <MdOutlineAddCircle size={20} />
+            Funding History
+          </NavLink>
+        )}
+
+
       </nav>
 
-      {/* Footer: Home + Logout */}
+      {/* Footer */}
       <div className="absolute bottom-4 left-0 w-full px-4 flex flex-col gap-2">
         <Link
           to="/"
