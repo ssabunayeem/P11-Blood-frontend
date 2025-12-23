@@ -17,6 +17,7 @@ import SearchRequest from "../pages/searchRequest/SearchRequest";
 import AllRequest from "../pages/AllRequest";
 import Blogs from "../pages/Blogs";
 import BlogDetails from "../pages/BlogDeatils";
+import Profile from "../pages/Dashboard/Profile/Profile";
 
 
 
@@ -93,6 +94,11 @@ const router = createBrowserRouter([
         path: "my-request",
         element: <MyRequest />,
       },
+      {
+        path: "profile",
+        element: <Profile />,
+      }
+
     ],
   },
 ]);

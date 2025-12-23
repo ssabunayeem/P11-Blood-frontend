@@ -60,6 +60,16 @@ const Aside = ({ isOpen, setIsOpen }) => {
           Dashboard
         </NavLink>
 
+        <NavLink
+          to="/dashboard/profile"
+          onClick={() => setIsOpen(false)}
+          className={menuItemClass}
+        >
+          <Users size={20} />
+          Profile
+        </NavLink>
+
+
         {role === "donor" && (
           <NavLink
             to="/dashboard/add-request"
@@ -67,7 +77,7 @@ const Aside = ({ isOpen, setIsOpen }) => {
             className={menuItemClass}
           >
             <MdOutlineAddCircle size={20} />
-            Add Request
+            Add Donation Request
           </NavLink>
         )}
 
@@ -77,7 +87,7 @@ const Aside = ({ isOpen, setIsOpen }) => {
           className={menuItemClass}
         >
           <NotebookPen size={20} />
-          My Requests
+          My Donation Requests
         </NavLink>
 
         {role === "admin" && (

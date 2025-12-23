@@ -52,7 +52,7 @@ const Register = () => {
       setUser(userCredential.user);
 
       // Send user data to backend
-      await axios.post("https://p11-blood-backend.vercel.app/users", {
+      await axios.post("http://localhost:5000/users", {
         email,
         name,
         bloodGroup,

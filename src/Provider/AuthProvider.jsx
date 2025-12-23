@@ -8,6 +8,7 @@ import {
 import auth from "./../firebase/firebase.config";
 import axios from "axios";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
@@ -41,15 +42,38 @@ const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (!user) return;
-    axios.get(`https://p11-blood-backend.vercel.app/users/role/${user.email}`).then((res) => {
+    axios.get(`http://localhost:5000/users/role/${user.email}`).then((res) => {
       setRole(res.data.role);
       setUserStatus(res.data.status);
       setRoleLoading(false);
     });
   }, [user]);
-  console.log(role);
+  console.log(role); */
+
+  // ==============nayeem=================>
+
+  useEffect(() => {
+    if (!user?.email) return;
+
+    let isMounted = true;
+
+    axios.get(`http://localhost:5000/users/role/${user.email}`).then((res) => {
+      if (isMounted) {
+        setRole(res.data.role);
+        setUserStatus(res.data.status);
+        setRoleLoading(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.email]);
+
+  // <==============nayeem=================
+
 
   const authData = {
     registerWithEmailPassword,
