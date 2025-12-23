@@ -7,7 +7,7 @@ const DashboardLayout = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-100 ">
+    <div className="min-h-screen bg-black/35 backdrop-blur-2xl">
 
       {/* Mobile Top Bar */}
       <div className="lg:hidden flex items-center gap-3 px-4 py-3

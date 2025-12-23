@@ -46,8 +46,8 @@ const MyRequest = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-5">My Donation Requests</h2>
+    <div className="text-white  md:font-bold">
+      <h2 className="text-2xl  text-white! font-bold mb-5">My Donation Requests</h2>
       <div className="overflow-x-auto">
         <table className="table w-full">
           <thead>
@@ -61,9 +61,9 @@ const MyRequest = () => {
           </thead>
           <tbody>
             {requests.map((req, i) => (
-              <tr key={req._id}>
+              <tr key={req._id} className=" ">
                 <td>{i + 1}</td>
-                <td>{req.hospitalName}</td>
+                <td className="text-white lg:text-xl">{req.hospitalName}</td>
                 <td>{req.bloodGroup}</td>
                 <td>
                   <span className={`badge ${req.donation_status === "pending"

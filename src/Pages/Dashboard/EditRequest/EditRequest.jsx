@@ -17,22 +17,26 @@ const EditRequest = () => {
     const [formData, setFormData] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // load district & upazila json + request data
     useEffect(() => {
         axios.get("/district.json")
             .then((res) => setDistricts(res.data.districts))
-            .catch((err) => console.error(err));
+            .catch((err) => console.error("district load failed", err));
 
         axios.get("/upazila.json")
             .then((res) => setUpazilas(res.data.upazilas))
-            .catch((err) => console.error(err));
+            .catch((err) => console.error("upazila load failed", err));
 
         axiosSecure.get(`/requests/${id}`)
             .then((res) => {
                 const data = res.data;
+
                 if (data.requester_email !== user.email) {
                     toast.error("Unauthorized access!");
-                    return navigate("/dashboard/my-request");
+                    navigate("/dashboard/my-request");
+                    return;
                 }
+
                 setFormData(data);
                 setLoading(false);
             })
@@ -40,19 +44,21 @@ const EditRequest = () => {
                 console.error(err);
                 toast.error("Failed to load request");
             });
+
     }, [id, user, axiosSecure, navigate]);
 
+    // update upazila list when district changes
     useEffect(() => {
-        if (formData) {
-            const districtName = formData.requester_district;
+        if (formData && upazilas.length > 0) {
+            const districtObj = districts.find(
+                (d) => d.name === formData.requester_district
+            );
 
-            // Find the district ID first
-            const selectedDistrict = districts.find(d => d.name === districtName);
-
-            if (selectedDistrict) {
+            if (districtObj) {
                 const filtered = upazilas.filter(
-                    (u) => u.district_id === selectedDistrict.id
+                    (u) => u.district_id === districtObj.id
                 );
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setFilteredUpazilas(filtered);
             }
         }
@@ -60,26 +66,26 @@ const EditRequest = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
         setFormData((prev) => ({ ...prev, [name]: value }));
 
         if (name === "requester_district") {
-            // Find the district ID
-            const selectedDistrict = districts.find(d => d.name === value);
-
-            if (selectedDistrict) {
-                const filtered = upazilas.filter((u) => u.district_id === selectedDistrict.id);
+            const districtObj = districts.find((d) => d.name === value);
+            if (districtObj) {
+                const filtered = upazilas.filter(
+                    (u) => u.district_id === districtObj.id
+                );
                 setFilteredUpazilas(filtered);
             }
 
             setFormData((prev) => ({ ...prev, requester_upazila: "" }));
         }
     };
-    console.log("nayeem", filteredUpazilas);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axiosSecure
-            .patch(`/requests/edit/${id}`, formData)
+
+        axiosSecure.patch(`/requests/edit/${id}`, formData)
             .then(() => {
                 toast.success("Request updated successfully!");
                 navigate("/dashboard/my-request");
@@ -87,7 +93,9 @@ const EditRequest = () => {
             .catch(() => toast.error("Update failed!"));
     };
 
-    if (loading || !formData) return <p className="text-center py-10">Loading...</p>;
+    if (loading || !formData) {
+        return <p className="text-center py-10">Loading...</p>;
+    }
 
     return (
         <div className="max-w-3xl mx-auto p-6 bg-white shadow-xl rounded-lg">
@@ -96,7 +104,7 @@ const EditRequest = () => {
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Recipient Name */}
+
                 <div>
                     <label className="block font-medium mb-1">Recipient Name</label>
                     <input
@@ -109,8 +117,9 @@ const EditRequest = () => {
                     />
                 </div>
 
-                {/* District & Upazila */}
                 <div className="grid md:grid-cols-2 gap-4">
+
+                    {/* district */}
                     <select
                         name="requester_district"
                         value={formData.requester_district}
@@ -126,6 +135,7 @@ const EditRequest = () => {
                         ))}
                     </select>
 
+                    {/* upazila (filtered) */}
                     <select
                         name="requester_upazila"
                         value={formData.requester_upazila}
@@ -140,9 +150,10 @@ const EditRequest = () => {
                             </option>
                         ))}
                     </select>
+
                 </div>
 
-                {/* Hospital & Address */}
+                {/* hospital & address */}
                 <div>
                     <label className="block font-medium mb-1">Hospital Name</label>
                     <input
@@ -167,7 +178,6 @@ const EditRequest = () => {
                     />
                 </div>
 
-                {/* Blood Group & Time */}
                 <select
                     name="bloodGroup"
                     value={formData.bloodGroup}
@@ -177,9 +187,7 @@ const EditRequest = () => {
                 >
                     <option value="">Select Blood Group</option>
                     {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((bg) => (
-                        <option key={bg} value={bg}>
-                            {bg}
-                        </option>
+                        <option key={bg} value={bg}>{bg}</option>
                     ))}
                 </select>
 
@@ -207,6 +215,7 @@ const EditRequest = () => {
                     value={formData.requestMessage}
                     onChange={handleChange}
                     className="textarea textarea-bordered w-full h-28"
+                    placeholder="Explain why blood is needed"
                     required
                 />
 
@@ -214,6 +223,7 @@ const EditRequest = () => {
                     Update Request
                 </button>
             </form>
+
         </div>
     );
 };
