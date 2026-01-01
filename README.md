@@ -1,16 +1,74 @@
-# React + Vite
+# 🩸 Blood Donation Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Overview
+A full-stack **MERN** application that connects blood donors with recipients through a secure, role-based platform. Users can create, manage, and respond to blood donation requests with a clean and recruiter-friendly UI.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 Purpose
+- Simplify blood donation requests
+- Help users find donors by blood group & location
+- Demonstrate a production-ready MERN application
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🌐 Live Links
+- **Frontend:** https://yim-blood-donation.netlify.app/
+- **Backend:** https://p11-blood-backend.vercel.app/
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📂 Repositories
+- **Frontend:** https://github.com/ssabunayeem/P11-Blood-frontend
+- **Backend:** https://github.com/ssabunayeem/P11-Blood-backend
+
+---
+
+## 👥 User Roles
+- **Admin:** Manage users, donation requests, funding, statistics
+- **Donor:** Create & manage own donation requests, update profile
+- **Volunteer:** View all requests, update donation status only
+
+---
+
+## 🚀 Key Features
+- Email & password authentication
+- JWT-protected private routes
+- Role-based access control
+- Blood donation request lifecycle management
+- Donor search by blood group & location
+- Funding system with Stripe integration
+- Responsive dashboard with sidebar layout
+- Pagination & filtering for tables
+
+---
+
+## 🛠️ Tech Stack
+**Frontend:** React, React Router, Tailwind CSS, Firebase, Axios  
+**Backend:** Node.js, Express.js, MongoDB, JWT, Stripe
+
+---
+
+## 📦 NPM Packages (Common)
+react-router-dom, firebase, axios, jsonwebtoken, dotenv, cors, mongoose, stripe
+
+---
+
+## 🔐 Environment Variables
+- Firebase keys secured with environment variables
+- MongoDB credentials secured using `.env`
+- JWT used for API protection
+
+---
+
+## ✅ Deployment Status
+- Live links working correctly
+- No CORS / reload / private route issues
+- Firebase domain authorized
+- Production-ready backend
+
+---
+
+## 👤 Author
+**Sabbir Ahmed Nayeem**  
+Full-Stack MERN Project
