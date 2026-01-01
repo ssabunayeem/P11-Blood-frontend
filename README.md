@@ -70,5 +70,5 @@ react-router-dom, firebase, axios, jsonwebtoken, dotenv, cors, mongoose, stripe
 ---
 
 ## 👤 Author
-**Sabbir Ahmed Nayeem**  
+**SS Abu Nayeem**  
 Full-Stack MERN Project
